@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>Logging out...</title>
+        <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    </head>
+    <script>
+        var config = {
+            apiKey: "AIzaSyBNKs2I0Ccabnp0gCbpKkk-OZdZoGHCI-Q",
+            authDomain: "nag-database.firebaseapp.com",
+            databaseURL: "https://nag-database.firebaseio.com",
+            projectId: "nag-database",
+            storageBucket: "nag-database.appspot.com",
+            messagingSenderId: "745179802464"
+        };
+        firebase.initializeApp(config);
+        
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                firebase.auth().signOut();
+                window.location.href = "../index.html";
+            } else {
+                console.log("You are already logged out ...");
+                window.location.href = "../index.html";
+            }
+        });
+    </script>
+</html>

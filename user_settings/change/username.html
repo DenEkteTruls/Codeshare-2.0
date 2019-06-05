@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Nag - Login</title>
+        <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+        <link href="../style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <ul id="nav">
+        <li class="current"><a href="../../index.html">Home</a>
+        <li><a href="../../codeshare/index.html">Codeshare</a>
+            <ul>
+                <li><a href="../../codeshare/start.html">Start</a></li>
+                <li><a href="../../codeshare/join.html">Join</a></li>
+            </ul>
+        </li>
+        <li><a href="../../login_handler/login.html">Login</a></li>
+            <ul>
+                <li><a href="../../login_handler/login.html">Login</a></li>
+                <li><a href="../../login_handler/registrer.html">Register</a></li>
+                <li><a href="../../login_handler/logout.html">Logout</a></li>
+            </ul>
+        </li>
+        <li><a href="../index.html">User Settings</a></li>
+    </ul>
+    <ul id="user_status"></ul>
+    <fieldset>
+        <ul style="list-style: none">
+            <ul id="status"></ul>
+            <li><input type="text" id="username" placeholder="New username"><input type="button" value="change" onclick="change_username()"></li>
+        </ul>
+    </fieldset>
+    <script>
+        var config = {
+            apiKey: "AIzaSyBNKs2I0Ccabnp0gCbpKkk-OZdZoGHCI-Q",
+            authDomain: "nag-database.firebaseapp.com",
+            databaseURL: "https://nag-database.firebaseio.com",
+            projectId: "nag-database",
+            storageBucket: "nag-database.appspot.com",
+            messagingSenderId: "745179802464"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script>
+        firebase.auth().onAuthStateChanged(function (user){
+            if(user) {
+                var state = user.displayName + " is Online";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+            } else {
+                var state = "Not logged in ...";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+            }
+        });
+        
+        function change_username() {
+            var user = firebase.auth().currentUser;
+            var new_username = document.getElementById("username").value;
+            user.updateProfile({
+                displayName: new_username
+            }).then(function() {
+                document.getElementById("status").innerHTML = "Username is changed";
+            }).catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+            });
+        }
+    </script>
+</html>

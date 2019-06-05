@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Nag - Login</title>
+        <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+        <link href="style_login.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <ul id="nav">
+        <li class="current"><a href="../index.html">Home</a></li>
+        <li><a href="../codeshare/index.html">Codeshare</a>
+            <ul>
+                <li><a href="../codeshare/start.html">Start</a></li>
+                <li><a href="../codeshare/join.html">Join</a></li>
+            </ul>
+        </li>
+        <li><a href="login.html">Login</a>
+            <ul>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="registrer.html">Register</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </li>
+        <li><a href="../user_settings/index.html">User Settings</a></li>
+    </ul>
+    <ul id="user_status"></ul>
+    <fieldset>
+        <p id="status"></p>
+        <input type="email" placeholder="email" id="email"><br>
+        <input type="password" placeholder="password" id="password"><br>
+        <input type="button" value="login" onclick="login()"><br><br><br>
+        <a href="registrer.html">Register here...</a>
+    </fieldset>
+    <footer>
+        <p> This page was made by Casper Nag </p>
+    </footer>
+    <script>
+        var config = {
+            apiKey: "AIzaSyBNKs2I0Ccabnp0gCbpKkk-OZdZoGHCI-Q",
+            authDomain: "nag-database.firebaseapp.com",
+            databaseURL: "https://nag-database.firebaseio.com",
+            projectId: "nag-database",
+            storageBucket: "nag-database.appspot.com",
+            messagingSenderId: "745179802464"
+        };
+        firebase.initializeApp(config);
+
+        var user_settings_state = false;
+        var chatroom_state = false;
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // user is active ...
+                console.log("User is active");
+                user_settings_state = true;
+                chatroom_state = true;
+                console.log(chatroom_state);
+                console.log(user_settings_state);
+                var state = user.displayName + " is Online";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+
+            } else {
+                // user is unactive ...
+                console.log("user is unactive");
+                var state = "Not logged in ...";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+            }
+        });
+        function wait(ms){
+            var start = new Date().getTime();
+            var end = start;
+            while(end < start + ms) {
+                end = new Date().getTime(); }
+        }
+
+        function nav_home() {
+            window.location.href = "../index.html";
+        }
+
+        function login() {            
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                document.getElementById("status").innerText = "The user is not valid ...";
+                sessionStorage.setItem("status", false);
+                return;
+            });
+            document.getElementById("status").innerText = "You are logged in!";
+        }
+
+        function nav_user_settings() {
+            if(user_settings_state) {
+                window.location.href = "../user_settings/index.html";
+            } else {
+                document.write("You are not logged in!");
+            }
+        }
+    </script>
+</html>

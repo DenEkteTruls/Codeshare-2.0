@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title> Nag </title>
+        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+        <link href="style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <ul id="nav">
+            <li class="current"><a href="../index.html">Home</a></li>
+            <li><a href="index.html">Codeshare</a>
+                <ul>
+                    <li><a href="start.html">Start</a></li>
+                    <li><a href="join.html">Join</a></li>
+                </ul>
+            </li>
+            <li><a href="../login_handler/login.html">Login</a>
+                <ul>
+                    <li><a href="../login_handler/login.html">Login</a></li>
+                    <li><a href="../login_handler/registrer.html">Register</a></li>
+                    <li><a href="../login_handler/logout.html">Logout</a></li>
+                </ul>
+            </li>
+            <li><a href="../user_settings/index.html">User Settings</a></li>
+        </ul>
+        <ul id="user_status"></ul>
+        <fieldset>
+                <textarea id="textbox" rows="18" cols="100"></textarea><br>
+                <input type="button" value="Publish" onclick="publish()"><br>
+                <textarea id="textbox2" rows="18" cols="100"></textarea>
+        </fieldset>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyBNKs2I0Ccabnp0gCbpKkk-OZdZoGHCI-Q",
+            authDomain: "nag-database.firebaseapp.com",
+            databaseURL: "https://nag-database.firebaseio.com",
+            projectId: "nag-database",
+            storageBucket: "nag-database.appspot.com",
+            messagingSenderId: "745179802464"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+    </script>
+    <script>
+        var user_settings_state = false;
+        var chatroom_state = false;
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log("User is active");
+                user_settings_state = true;
+                chatroom_state = true;
+                console.log(chatroom_state);
+                console.log(user_settings_state);
+                var user = firebase.auth().currentUser;
+                var state = user.displayName + " is Online";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+            } else {
+                // user is unactive
+                console.log("user is unactive");
+                var state = "Not logged in ...";
+                var node = document.createElement("li");
+                var textnode = document.createTextNode(state);
+                node.appendChild(textnode);
+                document.getElementById("user_status").appendChild(node);
+                alert("You are not logged in!");
+                window.loation.href = "../login_handler/login.html";
+            }
+        });
+        var key = sessionStorage.getItem("key");
+
+        function read() {
+            database.ref('sharing-rooms/'+key).child("code").on("value", function(snap) {
+                var code = snap.val();
+                console.log(code);
+                document.getElementById("textbox2").readOnly = true;
+                document.getElementById("textbox2").innerHTML = code;
+            });
+        }
+
+        function publish() {
+            var text = document.getElementById("textbox").value;
+            database.ref('sharing-rooms/').child(key).update({
+                code: text
+            });
+        }
+
+        read()
+
+    </script>
+</html>
